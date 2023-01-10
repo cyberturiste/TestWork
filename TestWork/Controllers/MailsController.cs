@@ -15,39 +15,59 @@ namespace TestWork.Controllers
     public class MailsController : ControllerBase
     {
 
-        String pathToDB= "Host=127.0.0.1;Port=5432;Database=postgres;Username=postgres;Password=postgres";
+        String pathToDB = "Host=127.0.0.1;Port=5432;Database=postgres;Username=postgres;Password=postgres";
 
         [HttpGet]
         public JsonResult Get()
         {
-            string query = @"
+            try
+            {
+                string query = @"
            select mailid,Title,Address from Mails
        ";
-            DataTable table = new DataTable();
-            string sqlDataSourse = pathToDB;
-            NpgsqlDataReader myReader;
-            using (NpgsqlConnection myConn = new NpgsqlConnection(sqlDataSourse))
-            {
-                myConn.Open();
-                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myConn))
+                DataTable table = new DataTable();
+                string sqlDataSourse = pathToDB;
+                NpgsqlDataReader myReader;
+                using (NpgsqlConnection myConn = new NpgsqlConnection(sqlDataSourse))
                 {
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                    myConn.Close();
+                    myConn.Open();
+                    using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myConn))
+                    {
+                        myReader = myCommand.ExecuteReader();
+                        table.Load(myReader);
+                        myReader.Close();
+                        myConn.Close();
+                    }
                 }
+                string JSONresult;
+                JSONresult = JsonConvert.SerializeObject(table);
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(JSONresult);
+                }
+
+                else return new JsonResult("datatable empry or does not exist");
+
+            }
+            catch (Exception e)
+            {
+
+                
+                
+                    return new JsonResult(e);
+                    throw;
+                
             }
 
-            string JSONresult;
-            JSONresult = JsonConvert.SerializeObject(table);
 
-            return new JsonResult(JSONresult);
+
+
 
         }
         [HttpGet("WithParametr")]
         public JsonResult GetwithParametr(string i)
         {
-            string query = @"select mailid,title,address from mails where mailid="+i;
+            string query = @"select mailid,title,address from mails where mailid=" + i;
             DataTable table = new DataTable();
             string sqlDataSourse = pathToDB;
             NpgsqlDataReader myReader;
