@@ -22,7 +22,7 @@ CREATE TABLE MAILS (
     TILTE text,Address text
 ); 
 
-Скрипт для добавление элемента  в таблицы:
+Скрипт для добавление элемента  в таблицу:
 
 INSERT INTO MAILS
     (TILTE,Address)
