@@ -6,6 +6,8 @@ using Npgsql;
 using System.Data;
 using System.Reflection;
 using TestWork.Models;
+using System.Configuration;
+
 
 namespace TestWork.Controllers
 {
@@ -14,8 +16,16 @@ namespace TestWork.Controllers
     [Route("[controller]")]
     public class MailsController : ControllerBase
     {
-
-        String pathToDB = "Host=127.0.0.1;Port=5432;Database=postgres;Username=postgres;Password=postgres";
+        private readonly ILogger<MailsController> _logger;
+        private readonly IConfiguration _configuration;
+        public MailsController(ILogger<MailsController> logger, IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+        IConfiguration config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .AddEnvironmentVariables()
+                .Build();
 
         [HttpGet]
         public JsonResult Get()
@@ -26,7 +36,8 @@ namespace TestWork.Controllers
            select mailid,Title,Address from Mails
        ";
                 DataTable table = new DataTable();
-                string sqlDataSourse = pathToDB;
+                
+                string sqlDataSourse = _configuration.GetConnectionString("DefaultConnection").ToString();
                 NpgsqlDataReader myReader;
                 using (NpgsqlConnection myConn = new NpgsqlConnection(sqlDataSourse))
                 {
@@ -52,11 +63,11 @@ namespace TestWork.Controllers
             catch (Exception e)
             {
 
-                
-                
-                    return new JsonResult(e);
-                    throw;
-                
+
+
+                return new JsonResult(e);
+                throw;
+
             }
 
 
@@ -69,7 +80,7 @@ namespace TestWork.Controllers
         {
             string query = @"select mailid,title,address from mails where mailid=" + i;
             DataTable table = new DataTable();
-            string sqlDataSourse = pathToDB;
+            string sqlDataSourse = _configuration.GetConnectionString("DefaultConnection").ToString();
             NpgsqlDataReader myReader;
             using (NpgsqlConnection myConn = new NpgsqlConnection(sqlDataSourse))
             {
@@ -97,7 +108,7 @@ namespace TestWork.Controllers
            insert into mails values(@mailid,@Title,@Address)
        ";
             DataTable table = new DataTable();
-            string sqlDataSourse = pathToDB;
+            string sqlDataSourse = _configuration.GetConnectionString("DefaultConnection").ToString();
             NpgsqlDataReader myReader;
             using (NpgsqlConnection myConn = new NpgsqlConnection(sqlDataSourse))
             {
@@ -130,7 +141,7 @@ namespace TestWork.Controllers
            update mails set Title=@Title,Address=@Address where mailid=@mailid
        ";
             DataTable table = new DataTable();
-            string sqlDataSourse = pathToDB;
+            string sqlDataSourse = _configuration.GetConnectionString("DefaultConnection").ToString();
             NpgsqlDataReader myReader;
             using (NpgsqlConnection myConn = new NpgsqlConnection(sqlDataSourse))
             {
