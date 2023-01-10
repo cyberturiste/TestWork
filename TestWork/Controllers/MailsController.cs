@@ -36,7 +36,7 @@ namespace TestWork.Controllers
            select mailid,Title,Address from Mails
        ";
                 DataTable table = new DataTable();
-                
+
                 string sqlDataSourse = _configuration.GetConnectionString("DefaultConnection").ToString();
                 NpgsqlDataReader myReader;
                 using (NpgsqlConnection myConn = new NpgsqlConnection(sqlDataSourse))
@@ -52,21 +52,16 @@ namespace TestWork.Controllers
                 }
                 string JSONresult;
                 JSONresult = JsonConvert.SerializeObject(table);
-                if (table.Rows.Count > 0)
-                {
-                    return new JsonResult(JSONresult);
-                }
 
-                else return new JsonResult("datatable empry or does not exist");
+                return new JsonResult(JSONresult);
+
 
             }
             catch (Exception e)
             {
 
-
-
                 return new JsonResult(e);
-                throw;
+
 
             }
 
@@ -78,92 +73,119 @@ namespace TestWork.Controllers
         [HttpGet("WithParametr")]
         public JsonResult GetwithParametr(string i)
         {
-            string query = @"select mailid,title,address from mails where mailid=" + i;
-            DataTable table = new DataTable();
-            string sqlDataSourse = _configuration.GetConnectionString("DefaultConnection").ToString();
-            NpgsqlDataReader myReader;
-            using (NpgsqlConnection myConn = new NpgsqlConnection(sqlDataSourse))
+            try
             {
-                myConn.Open();
-                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myConn))
+                string query = @"select mailid,title,address from mails where mailid=" + i;
+                DataTable table = new DataTable();
+                string sqlDataSourse = _configuration.GetConnectionString("DefaultConnection").ToString();
+                NpgsqlDataReader myReader;
+                using (NpgsqlConnection myConn = new NpgsqlConnection(sqlDataSourse))
                 {
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                    myConn.Close();
+                    myConn.Open();
+                    using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myConn))
+                    {
+                        myReader = myCommand.ExecuteReader();
+                        table.Load(myReader);
+                        myReader.Close();
+                        myConn.Close();
+                    }
                 }
+
+                string JSONresult;
+                JSONresult = JsonConvert.SerializeObject(table);
+
+                return new JsonResult(JSONresult);
             }
+            catch (Exception e)
+            {
 
-            string JSONresult;
-            JSONresult = JsonConvert.SerializeObject(table);
+                return new JsonResult(e);
 
-            return new JsonResult(JSONresult);
 
+            }
         }
 
         [HttpPost]
         public JsonResult Post(Mails dep)
         {
-            string query = @"
+            try
+            {
+                string query = @"
            insert into mails values(@mailid,@Title,@Address)
        ";
-            DataTable table = new DataTable();
-            string sqlDataSourse = _configuration.GetConnectionString("DefaultConnection").ToString();
-            NpgsqlDataReader myReader;
-            using (NpgsqlConnection myConn = new NpgsqlConnection(sqlDataSourse))
-            {
-                myConn.Open();
-                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myConn))
+                DataTable table = new DataTable();
+                string sqlDataSourse = _configuration.GetConnectionString("DefaultConnection").ToString();
+                NpgsqlDataReader myReader;
+                using (NpgsqlConnection myConn = new NpgsqlConnection(sqlDataSourse))
                 {
-                    myCommand.Parameters.AddWithValue("@mailid", dep.Id);
-                    myCommand.Parameters.AddWithValue("@Title", dep.Title);
-                    myCommand.Parameters.AddWithValue("@Address", dep.Address);
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
+                    myConn.Open();
+                    using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myConn))
+                    {
+                        myCommand.Parameters.AddWithValue("@mailid", dep.Id);
+                        myCommand.Parameters.AddWithValue("@Title", dep.Title);
+                        myCommand.Parameters.AddWithValue("@Address", dep.Address);
+                        myReader = myCommand.ExecuteReader();
+                        table.Load(myReader);
 
-                    myReader.Close();
-                    myConn.Close();
+                        myReader.Close();
+                        myConn.Close();
+                    }
                 }
+
+                string JSONresult;
+                JSONresult = JsonConvert.SerializeObject(table);
+
+                return new JsonResult("Added ready");
             }
+            catch (Exception e)
+            {
 
-            string JSONresult;
-            JSONresult = JsonConvert.SerializeObject(table);
+                return new JsonResult(e);
 
-            return new JsonResult("Added ready");
 
+            }
         }
 
 
         [HttpPut]
         public JsonResult Put(Mails dep)
         {
-            string query = @"
+            try
+            {
+                string query = @"
            update mails set Title=@Title,Address=@Address where mailid=@mailid
        ";
-            DataTable table = new DataTable();
-            string sqlDataSourse = _configuration.GetConnectionString("DefaultConnection").ToString();
-            NpgsqlDataReader myReader;
-            using (NpgsqlConnection myConn = new NpgsqlConnection(sqlDataSourse))
-            {
-                myConn.Open();
-                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myConn))
+                DataTable table = new DataTable();
+                string sqlDataSourse = _configuration.GetConnectionString("DefaultConnection").ToString();
+                NpgsqlDataReader myReader;
+                using (NpgsqlConnection myConn = new NpgsqlConnection(sqlDataSourse))
                 {
-                    myCommand.Parameters.AddWithValue("@mailid", dep.Id);
-                    myCommand.Parameters.AddWithValue("@Title", dep.Title);
-                    myCommand.Parameters.AddWithValue("@Address", dep.Address);
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
+                    myConn.Open();
+                    using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myConn))
+                    {
+                        myCommand.Parameters.AddWithValue("@mailid", dep.Id);
+                        myCommand.Parameters.AddWithValue("@Title", dep.Title);
+                        myCommand.Parameters.AddWithValue("@Address", dep.Address);
+                        myReader = myCommand.ExecuteReader();
+                        table.Load(myReader);
 
-                    myReader.Close();
-                    myConn.Close();
+                        myReader.Close();
+                        myConn.Close();
+                    }
                 }
+
+                string JSONresult;
+                JSONresult = JsonConvert.SerializeObject(table);
+
+                return new JsonResult("Added ready");
             }
+            catch (Exception e)
+            {
 
-            string JSONresult;
-            JSONresult = JsonConvert.SerializeObject(table);
+                return new JsonResult(e);
 
-            return new JsonResult("Added ready");
 
+            }
         }
 
 
